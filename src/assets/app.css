@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components{
+    .btn{
+        @apply bg-grey transition transform active:scale-95;
+    }
+    .btn-primary{
+        @apply bg-primary text-white;
+    }
+}
