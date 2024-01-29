@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+    .container{
+        @apply animate-fade-up  animate-once animate-duration-[400ms] bg-btcha p-5 rounded-md;
+    }
+    .input {
+        @apply block w-full px-3 py-2 text-btc bg-btcha rounded-lg border-2 focus:border-primary placeholder:text-ltc cursor-pointer focus:outline-none;
+      }
+    
+    .btn{
+        @apply bg-default transition transform active:scale-95;
+    }
+    .btn-primary{
+        @apply bg-primary text-white;
+    }
+    .sidebar-element {
+        @apply w-full flex items-center space-x-2.5 px-5 py-2.5 rounded-lg capitalize cursor-pointer hover:bg-btcha hover:text-primary [&.active]:bg-primary [&.active]:font-bold [&.active]:text-btcha focus:outline-none;
+    }
+    .sidebar-element-icon {
+        @apply flex justify-center items-center py-2.5 rounded-lg text-btc hover:bg-primary hover:text-btcha [&.active]:bg-primary [&.active]:text-btcha focus:outline-none;
+    }
+    .select {
+        @apply block w-full px-3 py-1 text-btc bg-btcha rounded-lg border-2 focus:border-primary cursor-pointer focus:outline-none;
+      }
+    .select-per-page {
+        @apply border border-ltc rounded-lg px-4 py-2.5 cursor-pointer focus:outline-none;
+    }  
+}

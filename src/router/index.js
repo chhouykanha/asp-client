@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import DashboardView from '@/views/DashboardView.vue';
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue';
+import CategoryView from '@/views/CategoryView.vue';
+import PostView from '@/views/PostView.vue';
 
 const loginValid = async (from, to, next) => {
   if (localStorage.getItem('token')){
@@ -15,9 +18,25 @@ const router = createRouter({
   routes: [
     {
       path : '/',
-      name : 'home',
       beforeEnter : loginValid,
-      component : HomeView
+      component : DashboardView,
+      children : [
+         {
+            path : '',
+            name : 'home',
+            component : HomeView
+         },
+         {
+            path : '/category',
+            name : 'category',
+            component : CategoryView
+         },
+         {
+            path : '/post',
+            name : 'post',
+            component : PostView
+         }
+      ]
     },
 
     {
