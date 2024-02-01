@@ -25,13 +25,14 @@
                     class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8 lg:ml-5">
                     <div>
                       <label for="input-name" class="block text-sm md:text-base lg:text-lg font-medium mb-2">ចំណងជើង<span class="text-red-500">*</span></label>
-                      <input v-model="name" type="text" id="input-name"
+                      <input v-model="title" type="text" id="input-name"
                         class="block border-2 py-3 px-4 w-full rounded-lg border-gray-300 border-transparent text-sm md:text-base lg:text-lg focus:outline-none  focus:border-primary"
                         placeholder="បញ្ចូលឈ្មោះប្រភេទអត្ថបទ" required />
                     </div>
                     <div>
                       <label for="input-name" class="block text-sm md:text-base lg:text-lg font-medium mb-2">ប្រភេទ<span class="text-red-500">*</span></label>
                       <select
+                      v-model="category"
                        class="block border-2 py-3 px-4 w-full bg-white rounded-lg border-gray-300 border-transparent text-sm md:text-base lg:text-lg focus:outline-none  focus:border-primary"
                       >
                           <option value="">ជ្រើសរើសប្រភេទ</option>
@@ -40,7 +41,7 @@
 
                     <div>
                       <label for="input-name" class="block text-sm md:text-base lg:text-lg font-medium mb-2">សង្ខេប<span class="text-red-500">*</span></label>
-                      <textarea placeholder="បញ្ចូលអត្ថបទសង្ខេប" class="block border-2 py-3 px-4 w-full rounded-lg border-gray-300 border-transparent text-sm md:text-base lg:text-lg focus:outline-none  focus:border-primary"></textarea>
+                      <textarea v-model="summary" placeholder="បញ្ចូលអត្ថបទសង្ខេប" class="block border-2 py-3 px-4 w-full rounded-lg border-gray-300 border-transparent text-sm md:text-base lg:text-lg focus:outline-none  focus:border-primary"></textarea>
                     </div>
 
                 
@@ -92,8 +93,11 @@
   
                     </div>
                     <div class="flex justify-end items-center">
-                      <button type="submit" class="btn btn-primary px-4 py-2 rounded-full text-sm md:text-base lg:text-lg">
+                      <button v-if="!isPending" type="submit" class="btn btn-primary px-4 py-2 rounded-full text-sm md:text-base lg:text-lg">
                         {{ doc ? 'កែប្រែ' : 'រក្សាទុក' }}
+                      </button>
+                      <button v-else type="submit" class="btn btn-primary px-4 py-2 rounded-full text-sm md:text-base lg:text-lg">
+                          កំពុងរក្សាទុក...
                       </button>
                     </div>
                   </form>
@@ -117,6 +121,7 @@
   import {onMounted, ref} from 'vue';
   import moment from 'moment';
   import CustomCkEditor from '@/components/CustomCkEditor.vue';
+  import useStorage from '../stores/storage';
   export default {
     props : ["doc"],
     emits: ["closeModal", "emitAddPost", "emitUpdatePost"],
@@ -139,70 +144,71 @@
       const createdAt = ref(moment(new Date()).format('MM/DD/YYYY'));
 
       const image = ref({});
-      const files = ref([]);
+      const file = ref('');
       const fileError = ref("");
-      const imageFile = ref(null);
+ 
+      const {url, uploadImage, isPending} = useStorage();
         
       const types = ["image/png", "image/jpg", "image/jpeg", "image/svg"];
 
       const handleInsertImage = (e) => {
-            const limitedMB = 1048576; //1MB
             const selected = e.target.files[0];
-            if (selected?.size > limitedMB) {
-                fileError.value = `Size of the image must be less than 1MB.`;
-                files.value = [];
-            } else {
-                if (selected && types.includes(selected.type)) {
+            const limitedSize = 1024 * 1024;
+            
+            if(selected.size > limitedSize){
+                fileError.value = 'Size image must be equal or less than 1MB';
+                file.value = null;
+            }else{
+                if(selected && types.includes(selected.type)){
                     image.value = {
-                        name: selected.name,
-                        src: URL.createObjectURL(selected),
+                      name: selected.name,
+                      src: URL.createObjectURL(selected),
                     };
-                    files.value.push(selected);
+                    file.value = selected;
                     fileError.value = null;
-                } else {
-                    fileError.value = `Only file of type jpg, jpeg, png, and svg.`;
-
-                    files.value = [];
+                }else{
+                    fileError.value = 'Only file of type jpg, jpeg, svg, png are allowed.';
+                    file.value = null;
                 }
             }
-
-            imageFile.value = selected;
-
         };
         const handleRemoveImage = () => {
             image.value = {};
-            files.value = [];
+            file.value = [];
         }
-
-
 
 
       const handleCloseModal = () => {
         emit("closeModal");
       }
 
-      const handleAddPost = () => {
+      const handleAddPost = async () => {
          if(props.doc){
-            emit("emitUpdatePost", { 
-              title : title.value,
-              category : category.value,
-              summary : summary.value,
-              content : content.value,
-              status : status.value,
-              createdAt : createdAt.value
-            });
+            //   emit("emitUpdatePost", { 
+            //   title : title.value,
+            //   category : category.value,
+            //   summary : summary.value,
+            //   content : content.value,
+            //   imageUrl : file.value,
+            //   status : status.value,
+            //   createdAt : createdAt.value
+            // });
 
          }else{
-            const data = {
+          if(file.value){
+                await uploadImage(file.value);
+          }
+          const data = {
               id : Math.random(),
               title : title.value,
               category : category.value,
               summary : summary.value,
               content : content.value,
+              imageUrl: url.value,
               status : status.value,
               createdAt : createdAt.value
-            }
-            emit("emitAddPost", data);
+            } 
+            // emit("emitAddPost", data);
           }
          }
         
@@ -230,6 +236,7 @@
         status,
         image,
         fileError,
+        isPending,
         handleInsertImage,
         handleRemoveImage,
         handleCloseModal,
