@@ -65,6 +65,7 @@
   } from "@headlessui/vue";
   import {onMounted, ref} from 'vue';
   import moment from 'moment';
+  import axios from 'axios';
   export default {
     props : ["doc"],
     emits: ["closeModal", "emitAddCategory", "emitUpdateCategory"],
@@ -86,29 +87,38 @@
       }
 
       const handleAddCategory = () => {
-         
+        const data = {
+              CategoryName : name.value,
+              Status : status.value,
+        }
 
          if(props.doc){
-            emit("emitUpdateCategory", { 
-              name : name.value,
-              status : status.value,
-              createdAt : moment(new Date()).format('MM/DD/YYYY')
-            });
+            data.id = props.doc.id;
+            axios.put(`https://localhost:7113/api/Category`,data)
+              .then(function (response) {
+                console.log(response);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+            emit("emitUpdateCategory");
 
          }else{
-            const data = {
-              id : Math.random(),
-              name : name.value,
-              status : status.value,
-              createdAt : moment(new Date()).format('MM/DD/YYYY')
-            }
-            emit("emitAddCategory", data);
+           
+            axios.post('https://localhost:7113/api/Category', data)
+              .then(function (response) {
+                console.log(response);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+            emit("emitAddCategory");
           }
          }
 
       onMounted(() => {
             if(props.doc){
-                 name.value = props.doc.name;
+                 name.value = props.doc.categoryName;
                  status.value = props.doc.status;
             }
       })

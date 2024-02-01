@@ -42,7 +42,7 @@
                     </button>
   
                     <button type="submit" class="btn text-white bg-red-600 px-8 py-1.5 rounded-lg  font-noto"
-                      @click="handleDelete()">
+                      @click="handleDelete(doc.id)">
                       លុប
                     </button>
   
@@ -63,7 +63,7 @@
     TransitionChild,
     TransitionRoot,
   } from "@headlessui/vue";
-
+  import axios from "axios";
   export default {
     components: {
       Dialog,
@@ -71,14 +71,15 @@
       TransitionChild,
       TransitionRoot,
     },
-    props: ["id",],
+    props: ["doc",],
     emits: ["onClose"],
     setup(props, { emit }) {
       const handleClose = () => {
         emit("onClose");
       };
 
-      const handleDelete = async () => {
+      const handleDelete =  (id) => {
+        axios.delete(`https://localhost:7113/api/Category?id=${id}`);
         handleClose();
       }
   

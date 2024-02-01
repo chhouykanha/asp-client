@@ -61,8 +61,8 @@
                                 :key="i"
                                 class="[&>*]:border [&>*]:p-2">
                                     <td class="text-center">{{ i+=1 }}</td>
-                                    <td>{{ category.name }}</td>
-                                    <td>{{ category.createdAt }}</td>
+                                    <td>{{ category.categoryName }}</td>
+                                    <td>{{ category.created }}</td>
                                     <td class="text-center">
                                         <span :class="category.status ? 'bg-green-600' : 'bg-red-600'"
                                             class="px-1.5 p-[2px] rounded-full text-white">
@@ -85,7 +85,7 @@
                                             <span>កែប្រែ</span>
                                         </button>
                                         <button
-                                            @click.prevent="mountComponent('CategoryDeleteConfirm')"
+                                            @click.prevent="handleConfirmDelete(category)"
                                             class="text-red-600 space-x-1 font-medium hover:underline whitespace-nowrap">
                                             <font-awesome-icon icon="fa-solid fa-trash" />
                                             <span>លុប</span>
@@ -113,7 +113,9 @@
 import { ref } from 'vue'
 import CategoryModal from '@/components/CategoryModal.vue';
 import CategoryDeleteConfirm from '@/components/CategoryDeleteConfirm.vue';
-import { Notivue, Notifications, push } from 'notivue'
+import { Notivue, Notifications, push } from 'notivue';
+import axios from 'axios';
+import { onMounted } from 'vue';
 export default {
     components : {
         CategoryModal,
@@ -127,6 +129,8 @@ export default {
         const category = ref(null); 
         const currentCompponent = ref('');
 
+ 
+
         const mountComponent = (component) => {
             currentCompponent.value = component;
         }
@@ -135,14 +139,13 @@ export default {
             category.value = "";
         }
 
-        const handleAddCategory = (data) => {
-            categories.value.push(data);  
+        const handleAddCategory = () => {
             unMountComponent();
             push.success('អ្នកបញ្ចូលបានជោគជ័យ!')
         }
 
         const handleEditCategory = (data) => {
-            category.value = categories.value.find(item => item.id === data.id);
+            category.value =data;
             mountComponent("CategoryModal");
         }
 
@@ -150,6 +153,24 @@ export default {
             unMountComponent();
             push.success('អ្នកកែប្រែបានជោគជ័យ!')
         }
+
+        const handleConfirmDelete = (data) => {
+            category.value =  data;
+            mountComponent("CategoryDeleteConfirm");
+
+        }
+
+        onMounted(() => {
+            axios.get('https://localhost:7113/api/Category')
+                .then(function (response) {
+                    // handle success
+                    categories.value = response.data;
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+             })
+        })
     
         return{
             categories,
@@ -159,7 +180,8 @@ export default {
             unMountComponent,
             handleAddCategory,
             handleEditCategory,
-            handleUpdateCategory
+            handleUpdateCategory,
+            handleConfirmDelete
         }
     }
 }
