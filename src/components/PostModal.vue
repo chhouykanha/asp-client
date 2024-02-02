@@ -148,7 +148,6 @@
       const summary = ref('');
       const content = ref('');
       const status = ref(true);
-      const createdAt = ref(moment(new Date()).format('MM/DD/YYYY'));
 
       const image = ref({});
       const file = ref('');
@@ -190,31 +189,39 @@
       }
 
       const handleAddPost = async () => {
+        const data = {
+          title : title.value,
+          CategoryName : category.value,
+          Summary : summary.value,
+          Content : content.value,
+          Status : status.value,
+        } 
          if(props.doc){
+              data.id = props.doc.id;
               if(file.value){
-                    await uploadImage(file.value);
+                      await uploadImage(file.value);
+                      data.ImageUrl = url.value;
+                      axios.post('https://localhost:7113/api/Post', data)
+                      .then(function (response) {
+                        console.log(response);
+                      })
+                      .catch(function (error) {
+                        console.log(error);
+                      });
+              }else{
+                axios.post('https://localhost:7113/api/Post', data)
+                      .then(function (response) {
+                        console.log(response);
+                      })
+                      .catch(function (error) {
+                        console.log(error);
+                });
               }
-              emit("emitUpdatePost", { 
-              title : title.value,
-              category : category.value,
-              summary : summary.value,
-              content : content.value,
-              imageUrl : file.value,
-              status : status.value,
-            });
+              emit("emitUpdatePost");
 
-         }else{
-          if(file.value){
-                await uploadImage(file.value);
-          }
-          const data = {
-              title : title.value,
-              CategoryName : category.value,
-              Summary : summary.value,
-              Content : content.value,
-              ImageUrl: url.value,
-              Status : status.value,
-            } 
+         }else{  
+          await uploadImage(file.value);
+          data.ImageUrl = url.value,
 
             axios.post('https://localhost:7113/api/Post', data)
               .then(function (response) {
@@ -239,6 +246,7 @@
                  summary.value = props.doc.summary;
                  content.value = props.doc.content;
                  status.value = props.doc.status;
+                 image.url = props.doc.imageUrl;
             }
 
             axios.get('https://localhost:7113/api/Category')

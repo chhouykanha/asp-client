@@ -181,8 +181,8 @@ setup(){
     }
 
     const handleEditPost = (data) => {
-        post.value = posts.value.find(item => item.id === data.id);
-        mountComponent("CategoryModal");
+        post.value = data;
+        mountComponent("PostModal");
     }
 
     const handleUpdatePost = (data) => {
