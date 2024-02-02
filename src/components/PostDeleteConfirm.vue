@@ -41,12 +41,12 @@
                       បិទ
                     </button>
   
-                    <button type="submit" class="btn text-white bg-red-600 px-8 py-1.5 rounded-lg  font-noto"
+                    <button v-if="!isPending" type="submit" class="btn text-white bg-red-600 px-8 py-1.5 rounded-lg  font-noto"
                       @click="handleDelete(doc)">
                       លុប
                     </button>
 
-                    <button type="submit" class="btn text-white bg-red-600 px-8 py-1.5 rounded-lg  font-noto">
+                    <button v-else type="submit" class="btn text-white bg-red-600 px-8 py-1.5 rounded-lg  font-noto">
                              កំពុងលុប...
                     </button>
   
