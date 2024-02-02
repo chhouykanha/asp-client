@@ -100,7 +100,7 @@
                                         <span>កែប្រែ</span>
                                     </button>
                                     <button
-                                        @click.prevent="mountComponent('PostDeleteConfirm')"
+                                        @click.prevent="handleConfirmDelete(post)"
                                         class="text-red-600 space-x-1 font-medium hover:underline whitespace-nowrap">
                                         <font-awesome-icon icon="fa-solid fa-trash" />
                                         <span>លុប</span>
@@ -123,11 +123,12 @@
 
     <component 
         :is="currentCompponent" 
-        :doc="category" 
+        :doc="post" 
         @emitAddPost="handleAddPost" 
         @emitUpdatePost="handleUpdatePost"  
         @closeModal="unMountComponent" 
         @onClose="unMountComponent" 
+        @onDelete="unMountComponent"
     />
 </template>
 
@@ -169,12 +170,12 @@ setup(){
     const unMountComponent = () => {
         currentCompponent.value = '';
         post.value = "";
+        window.location.reload();
     }
 
     const handleAddPost = () => {  
         unMountComponent();
         push.success('អ្នកបញ្ចូលបានជោគជ័យ!')
-        window.location.reload();
     }
 
     const handleEditPost = (data) => {
@@ -185,6 +186,11 @@ setup(){
     const handleUpdatePost = (data) => {
         unMountComponent();
         push.success('អ្នកកែប្រែបានជោគជ័យ!')
+    }
+
+    const handleConfirmDelete = (data) => {
+        post.value = data;
+        mountComponent('PostDeleteConfirm');
     }
 
     const formatDate = (date) => {
@@ -199,6 +205,7 @@ setup(){
         currentCompponent,
         post,
         mountComponent,
+        handleConfirmDelete,
         unMountComponent,
         handleAddPost,
         handleEditPost,
