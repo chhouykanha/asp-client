@@ -20,7 +20,7 @@ export default {
         const posts = ref([]);
     const post = ref(null); 
     const currentCompponent = ref('');
-
+    
     const getPosts = (id) => {
             axios.get(`https://localhost:7113/api/Post?id=${id}`)
                 .then(function (response) {
@@ -34,18 +34,10 @@ export default {
              })
         }
 
-    const mountComponent = (component) => {
-        currentCompponent.value = component;
-    }
-    const unMountComponent = () => {
-        currentCompponent.value = '';
-        post.value = "";
-    }
-
         const route = useRoute();
         console.log(route.params.id)
         onMounted(() => {
-            getPosts()
+            getPosts(route.params.id)
         })
     } 
 }
