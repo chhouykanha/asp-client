@@ -14,8 +14,13 @@
     props: ["data"],
     emits: ["onListenToData"],
     setup(props, { emit }) {
-      const data = ref("Content of the project.");
-  
+
+      const data = ref(null);
+      
+      if(props.data){
+        data.value = props.data;
+      }
+
       watch(props, () => {
         data.value = props.data;
         console.log(data.value);

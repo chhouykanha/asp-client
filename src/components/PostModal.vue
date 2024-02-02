@@ -82,7 +82,7 @@
                       </div>
 
                       <div class="col-span-2">
-                            <CustomCkEditor @onListenToData="getDataFromCkEditor"/>
+                            <CustomCkEditor @onListenToData="getDataFromCkEditor" :data="content"/>
                       </div>
 
                
@@ -201,7 +201,7 @@
               if(file.value){
                       await uploadImage(file.value);
                       data.ImageUrl = url.value;
-                      axios.post('https://localhost:7113/api/Post', data)
+                      axios.put('https://localhost:7113/api/Post', data)
                       .then(function (response) {
                         console.log(response);
                       })
@@ -209,7 +209,7 @@
                         console.log(error);
                       });
               }else{
-                axios.post('https://localhost:7113/api/Post', data)
+                axios.put('https://localhost:7113/api/Post', data)
                       .then(function (response) {
                         console.log(response);
                       })
@@ -236,7 +236,6 @@
         
       const getDataFromCkEditor = (data) => {
           content.value = data
-          console.log(content.value);
       }
 
       onMounted(() => {
