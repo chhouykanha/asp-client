@@ -55,6 +55,16 @@
                     <p>បង្ហោះអត្ថបទ</p>
             </router-link>
             <router-link
+                to="/media"
+                class="sidebar-element"
+                :class="$route.name == 'media' && 'active'"
+            >
+                    <div class="w-5">
+                      <font-awesome-icon icon="fa-solid fa-images" />
+                    </div>
+                    <p>បញ្ជីររូបភាព</p>
+            </router-link>
+            <router-link
                 to="/login"
                 class="sidebar-element"
                 :class="$route.name == 'login' && 'active'"

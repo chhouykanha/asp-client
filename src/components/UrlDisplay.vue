@@ -10,6 +10,12 @@
             <div v-if="$route.path == '/post'" class="text-primary font-bold">
                 អត្ថបទ
             </div>
+            <div v-if="$route.path == '/media'" class="text-primary font-bold">
+                បញ្ជីររូបភាព
+            </div>
+            <div v-if="$route.path == '/single-post'" class="text-primary font-bold">
+                អានអត្ថបទ
+            </div>
 
         </div>
 </template>

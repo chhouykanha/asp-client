@@ -4,6 +4,7 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue';
 import CategoryView from '@/views/CategoryView.vue';
 import PostView from '@/views/PostView.vue';
+import MediaView from '@/views/MediaView.vue';
 
 const loginValid = async (from, to, next) => {
   if (localStorage.getItem('token')){
@@ -35,6 +36,11 @@ const router = createRouter({
             path : '/post',
             name : 'post',
             component : PostView
+         },
+         {
+            path : '/media',
+            name : 'media',
+            component : MediaView
          }
       ]
     },
