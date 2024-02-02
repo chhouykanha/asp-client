@@ -139,11 +139,13 @@ import { Notivue, Notifications, push } from 'notivue'
 import axios from 'axios';
 import { onMounted } from 'vue';
 import moment from 'moment';
+import PostDeleteConfirm from '@/components/PostDeleteConfirm.vue';
 export default {
 components : {
     Notivue,
     Notifications,
     PostModal,
+    PostDeleteConfirm
 },
 setup(){
 
