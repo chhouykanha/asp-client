@@ -4,7 +4,11 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue';
 import CategoryView from '@/views/CategoryView.vue';
 import PostView from '@/views/PostView.vue';
+<<<<<<< HEAD
 import SinglePostView from '@/views/SinglePostView.vue';
+=======
+import MediaView from '@/views/MediaView.vue';
+>>>>>>> 08002a8d2fe8098790129f9a688ab0ad5eb7e6b3
 
 const loginValid = async (from, to, next) => {
   if (localStorage.getItem('token')){
@@ -38,9 +42,15 @@ const router = createRouter({
             component : PostView
          },
          {
+<<<<<<< HEAD
             path : '/post/:id',
             name : 'single-post',
             component : SinglePostView
+=======
+            path : '/media',
+            name : 'media',
+            component : MediaView
+>>>>>>> 08002a8d2fe8098790129f9a688ab0ad5eb7e6b3
          }
       ]
     },

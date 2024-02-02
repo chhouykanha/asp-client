@@ -12,10 +12,14 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import "zoom-vanilla.js/dist/zoom.css"
+import "zoom-vanilla.js/dist/zoom-vanilla.min.js" 
 
-import { faTrash, faPenToSquare, faCircleCheck, faCircleXmark, faUser,faWallet,faCircleArrowRight, faTags, faParagraph} from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faPenToSquare,faImages, faCircleCheck, faCircleXmark, faUser,faWallet,faCircleArrowRight, faTags, faParagraph} from "@fortawesome/free-solid-svg-icons";
+import {faImage} from '@fortawesome/free-regular-svg-icons';
 library.add(
     faTrash,
+    faImages,
     faPenToSquare,
     faCircleCheck,
     faCircleXmark,
@@ -23,7 +27,8 @@ library.add(
     faWallet,
     faCircleArrowRight,
     faTags,
-    faParagraph
+    faParagraph,
+    faImage
 )
 
 const notivue = createNotivue({
@@ -36,7 +41,7 @@ const notivue = createNotivue({
       }
     }
   })
-  
+ 
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(CKEditor)
