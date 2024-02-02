@@ -36,6 +36,9 @@
                        class="block border-2 py-3 px-4 w-full bg-white rounded-lg border-gray-300 border-transparent text-sm md:text-base lg:text-lg focus:outline-none  focus:border-primary"
                       >
                           <option value="">ជ្រើសរើសប្រភេទ</option>
+                          <option v-for="(item, i) in categories" :value="item.categoryName" :key="i">
+                              {{ item.categoryName }}
+                          </option>
                       </select>
                     </div>
 
@@ -73,6 +76,8 @@
                                   </span>
                               </div>
                             </div>
+
+                            <div v-if="fileError" class="text-red-500 text-xs">{{ fileError }}</div>
 
                       </div>
 
@@ -122,6 +127,7 @@
   import moment from 'moment';
   import CustomCkEditor from '@/components/CustomCkEditor.vue';
   import useStorage from '../stores/storage';
+  import axios from 'axios';
   export default {
     props : ["doc"],
     emits: ["closeModal", "emitAddPost", "emitUpdatePost"],
@@ -138,6 +144,7 @@
     setup(props, { emit }) {
       const title = ref('');
       const category = ref('');
+      const categories = ref('');
       const summary = ref('');
       const content = ref('');
       const status = ref(true);
@@ -184,31 +191,39 @@
 
       const handleAddPost = async () => {
          if(props.doc){
-            //   emit("emitUpdatePost", { 
-            //   title : title.value,
-            //   category : category.value,
-            //   summary : summary.value,
-            //   content : content.value,
-            //   imageUrl : file.value,
-            //   status : status.value,
-            //   createdAt : createdAt.value
-            // });
+              if(file.value){
+                    await uploadImage(file.value);
+              }
+              emit("emitUpdatePost", { 
+              title : title.value,
+              category : category.value,
+              summary : summary.value,
+              content : content.value,
+              imageUrl : file.value,
+              status : status.value,
+            });
 
          }else{
           if(file.value){
                 await uploadImage(file.value);
           }
           const data = {
-              id : Math.random(),
               title : title.value,
-              category : category.value,
-              summary : summary.value,
-              content : content.value,
-              imageUrl: url.value,
-              status : status.value,
-              createdAt : createdAt.value
+              CategoryName : category.value,
+              Summary : summary.value,
+              Content : content.value,
+              ImageUrl: url.value,
+              Status : status.value,
             } 
-            // emit("emitAddPost", data);
+
+            axios.post('https://localhost:7113/api/Post', data)
+              .then(function (response) {
+                console.log(response);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+              emit("emitAddPost");
           }
          }
         
@@ -219,12 +234,22 @@
 
       onMounted(() => {
             if(props.doc){
-                 title.value = props.doc.name;
-                 category.value = props.doc.category;
+                 title.value = props.doc.title;
+                 category.value = props.doc.categoryName;
                  summary.value = props.doc.summary;
                  content.value = props.doc.content;
                  status.value = props.doc.status;
             }
+
+            axios.get('https://localhost:7113/api/Category')
+                .then(function (response) {
+                    // handle success
+                    categories.value = response.data;
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+             })
       })
 
   
@@ -234,7 +259,9 @@
         summary,
         content,
         status,
+        fileError,
         image,
+        categories,
         fileError,
         isPending,
         handleInsertImage,

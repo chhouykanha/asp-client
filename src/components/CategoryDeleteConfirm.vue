@@ -72,7 +72,7 @@
       TransitionRoot,
     },
     props: ["doc",],
-    emits: ["onClose"],
+    emits: ["onClose", "onDelete"],
     setup(props, { emit }) {
       const handleClose = () => {
         emit("onClose");
@@ -80,7 +80,7 @@
 
       const handleDelete =  (id) => {
         axios.delete(`https://localhost:7113/api/Category?id=${id}`);
-        handleClose();
+        emit("onDelete")
       }
   
       return { handleDelete, handleClose };

@@ -1,9 +1,9 @@
 <template>
         <div class="container">
             <div class="space-y-5 rounded-lg bg-btcha">
-                <div class="text-hd2 font-bold text-sm md:text-lg lg:text-xl">បញ្ជីឈ្មោះអតិថិជន</div>
+                <!-- <div class="text-hd2 font-bold text-sm md:text-lg lg:text-xl">បញ្ជីឈ្មោះអតិថិជន</div> -->
                 <div class="flex items-center justify-between">
-                    <div class="flex flex-col space-y-1">
+                    <!-- <div class="flex flex-col space-y-1">
                         <select
                             class="select-per-page text-sm md:text-base lg:text-lg"                
                         >
@@ -14,7 +14,7 @@
                             <option value="500">500</option>
                             <option value="1000">1000</option>
                         </select>
-                    </div>
+                    </div> -->
 
                     <div class="w-[320px] flex items-center space-x-1 text-sm md:text-base lg:text-lg">
                     <input
@@ -62,7 +62,7 @@
                                 class="[&>*]:border [&>*]:p-2">
                                     <td class="text-center">{{ i+=1 }}</td>
                                     <td>{{ category.categoryName }}</td>
-                                    <td>{{ category.created }}</td>
+                                    <td>{{ formatDate(category.created) }}</td>
                                     <td class="text-center">
                                         <span :class="category.status ? 'bg-green-600' : 'bg-red-600'"
                                             class="px-1.5 p-[2px] rounded-full text-white">
@@ -78,6 +78,7 @@
 
                                     </td>
                                     <td class="space-x-2">
+                                      
                                         <button
                                             @click.prevent="handleEditCategory(category)"
                                             class="text-yellow-700 space-x-1 font-medium hover:underline whitespace-nowrap">
@@ -106,7 +107,7 @@
             <Notifications :item="item" />
         </Notivue>
 
-        <component :is="currentCompponent" :doc="category" @emitAddCategory="handleAddCategory" @emitUpdateCategory="handleUpdateCategory"  @closeModal="unMountComponent" @onClose="unMountComponent" />
+        <component :is="currentCompponent" :doc="category" @emitAddCategory="handleAddCategory" @emitUpdateCategory="handleUpdateCategory" @onDelete="handleDeleteCategory"  @closeModal="unMountComponent" @onClose="unMountComponent" />
 </template>
 
 <script>
@@ -115,6 +116,7 @@ import CategoryModal from '@/components/CategoryModal.vue';
 import CategoryDeleteConfirm from '@/components/CategoryDeleteConfirm.vue';
 import { Notivue, Notifications, push } from 'notivue';
 import axios from 'axios';
+import moment from 'moment';
 import { onMounted } from 'vue';
 export default {
     components : {
@@ -128,39 +130,7 @@ export default {
         const categories = ref([]);
         const category = ref(null); 
         const currentCompponent = ref('');
-
- 
-
-        const mountComponent = (component) => {
-            currentCompponent.value = component;
-        }
-        const unMountComponent = () => {
-            currentCompponent.value = '';
-            category.value = "";
-        }
-
-        const handleAddCategory = () => {
-            unMountComponent();
-            push.success('អ្នកបញ្ចូលបានជោគជ័យ!')
-        }
-
-        const handleEditCategory = (data) => {
-            category.value =data;
-            mountComponent("CategoryModal");
-        }
-
-        const handleUpdateCategory = (data) => {
-            unMountComponent();
-            push.success('អ្នកកែប្រែបានជោគជ័យ!')
-        }
-
-        const handleConfirmDelete = (data) => {
-            category.value =  data;
-            mountComponent("CategoryDeleteConfirm");
-
-        }
-
-        onMounted(() => {
+        const getCategory = () => {
             axios.get('https://localhost:7113/api/Category')
                 .then(function (response) {
                     // handle success
@@ -170,17 +140,69 @@ export default {
                     // handle error
                     console.log(error);
              })
-        })
-    
+        }
+
+        const mountComponent = (component) => {
+            currentCompponent.value = component;
+        }
+
+        const unMountComponent = () => {
+            currentCompponent.value = '';
+            category.value = "";
+           
+        }
+
+        const handleAddCategory = () => {  
+            unMountComponent();
+            push.success('អ្នកបញ្ចូលបានជោគជ័យ!')
+            window.location.reload();
+            
+        }
+
+        const handleEditCategory = (data) => {
+            category.value =data;
+            mountComponent("CategoryModal");
+        }
+
+        const handleUpdateCategory = () => {
+            unMountComponent();
+            push.success('អ្នកកែប្រែបានជោគជ័យ!')
+            window.location.reload();
+
+        }
+
+        const handleConfirmDelete = (data) => {
+            category.value =  data;
+            mountComponent("CategoryDeleteConfirm");
+        }
+
+        const handleDeleteCategory = () => {
+            unMountComponent('CategoryDeleteConfirm');
+            push.success('អ្នកបានលុបជោគជ័យ!')
+            window.location.reload();
+
+        }
+
+        const formatDate = (date) => {
+            return moment(date).format("dd/MM/yyyy");
+        }
+
+        
+
+        onMounted(() => {
+            getCategory()
+        })    
         return{
             categories,
             currentCompponent,
             category,
+            formatDate,
             mountComponent,
             unMountComponent,
             handleAddCategory,
             handleEditCategory,
             handleUpdateCategory,
+            handleDeleteCategory,
             handleConfirmDelete
         }
     }

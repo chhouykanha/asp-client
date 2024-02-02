@@ -81,6 +81,7 @@
     setup(props, { emit }) {
       const name = ref('');
       const status = ref(true);
+      const categories = ref([]);
 
       const handleCloseModal = () => {
         emit("closeModal");
@@ -88,7 +89,7 @@
 
       const handleAddCategory = () => {
         const data = {
-              CategoryName : name.value,
+          CategoryName : name.value,
               Status : status.value,
         }
 
@@ -112,7 +113,7 @@
               .catch(function (error) {
                 console.log(error);
               });
-            emit("emitAddCategory");
+              emit("emitAddCategory");
           }
          }
 

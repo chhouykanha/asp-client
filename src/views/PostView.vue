@@ -1,9 +1,9 @@
 <template>
     <div class="container">
         <div class="space-y-5 rounded-lg bg-btcha">
-            <div class="text-hd2 font-bold text-sm md:text-lg lg:text-xl">បញ្ជីឈ្មោះអតិថិជន</div>
+            <!-- <div class="text-hd2 font-bold text-sm md:text-lg lg:text-xl">បញ្ជីឈ្មោះអតិថិជន</div> -->
             <div class="flex items-center justify-between">
-                <div class="flex flex-col space-y-1">
+                <!-- <div class="flex flex-col space-y-1">
                     <select
                         class="select-per-page text-sm md:text-base lg:text-lg"                
                     >
@@ -14,7 +14,7 @@
                         <option value="500">500</option>
                         <option value="1000">1000</option>
                     </select>
-                </div>
+                </div> -->
 
                 <div class="w-[320px] flex items-center space-x-1 text-sm md:text-base lg:text-lg">
                 <input
@@ -67,8 +67,10 @@
                             :key="i"
                             class="[&>*]:border [&>*]:p-2">
                                 <td class="text-center">{{ i+=1 }}</td>
-                                <td>{{ post.name }}</td>
-                                <td>{{ post.createdAt }}</td>
+                                <td> <img class="w-12 rounded-full" :src="post.imageUrl" alt="sd"> </td>
+                                <td>{{ post.categoryName }}</td>
+                                <td>{{ post.title }}</td>
+                                <td>{{ formatDate(post.created) }}</td>
                                 <td class="text-center">
                                     <span :class="post.status ? 'bg-green-600' : 'bg-red-600'"
                                         class="px-1.5 p-[2px] rounded-full text-white">
@@ -84,6 +86,13 @@
 
                                 </td>
                                 <td class="space-x-2">
+                                    <router-link
+                                        :to="{name : 'single-post', params : {id : post.id}}"
+                                            class="text-green-700 space-x-1 font-medium hover:underline whitespace-nowrap">
+                                            <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+                                            <span>មើល</span>
+                                    </router-link>
+
                                     <button
                                         @click.prevent="handleEditPost(post)"
                                         class="text-yellow-700 space-x-1 font-medium hover:underline whitespace-nowrap">
@@ -126,6 +135,9 @@
 import { ref } from 'vue'
 import PostModal from '@/components/PostModal.vue';
 import { Notivue, Notifications, push } from 'notivue'
+import axios from 'axios';
+import { onMounted } from 'vue';
+import moment from 'moment';
 export default {
 components : {
     Notivue,
@@ -138,18 +150,31 @@ setup(){
     const post = ref(null); 
     const currentCompponent = ref('');
 
+    const getPosts = () => {
+            axios.get('https://localhost:7113/api/Post')
+                .then(function (response) {
+                    // handle success
+                    posts.value = response.data;
+                    console.log(posts.value);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+             })
+        }
+
     const mountComponent = (component) => {
         currentCompponent.value = component;
     }
     const unMountComponent = () => {
         currentCompponent.value = '';
-        category.value = "";
+        post.value = "";
     }
 
-    const handleAddPost = (data) => {
-        posts.value.push(data);  
+    const handleAddPost = () => {  
         unMountComponent();
         push.success('អ្នកបញ្ចូលបានជោគជ័យ!')
+        window.location.reload();
     }
 
     const handleEditPost = (data) => {
@@ -162,6 +187,13 @@ setup(){
         push.success('អ្នកកែប្រែបានជោគជ័យ!')
     }
 
+    const formatDate = (date) => {
+        return moment(date).format("dd/MM/yyyy");
+    }
+    
+    onMounted(() => {
+        getPosts()
+    }) 
     return{
         posts,
         currentCompponent,
@@ -170,7 +202,8 @@ setup(){
         unMountComponent,
         handleAddPost,
         handleEditPost,
-        handleUpdatePost
+        handleUpdatePost,
+        formatDate
     }
 }
 }
